@@ -16,11 +16,11 @@ Feature: Strypes.eu home page testing
 
   Scenario: Verify if Back To Top button is hidden when user is at the top of the page
     When user is at top of the page
-    Then back To Top button is hidden
+    Then Back To Top button is hidden
 
   Scenario: Verify if Back To Top button is displayed when user is not at the top of the page
     When user is not at top of the page
-    Then back To Top button is displayed
+    Then Back To Top button is displayed
 
   Scenario: User attempts newsletter subscription with valid not subscribed email
     Given user enters valid not subscribed email

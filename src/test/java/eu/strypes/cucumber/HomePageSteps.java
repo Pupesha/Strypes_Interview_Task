@@ -146,7 +146,7 @@ public class HomePageSteps {
             PageHelper.scrollToTop(context.getBrowser());
     }
 
-    @Then("back To Top button is hidden")
+    @Then("Back To Top button is hidden")
     public void backToTopButtonIsHidden() {
         assertFalse(homePage.backToTopButtonIsVisible(), "Back To Top button is visible when user is at the top of the page");
     }
@@ -158,7 +158,7 @@ public class HomePageSteps {
         PageHelper.scrollY(context.getBrowser(), offset);
     }
 
-    @Then("back To Top button is displayed")
+    @Then("Back To Top button is displayed")
     public void backToTopButtonIsDisplayed() {
         assertTrue(homePage.backToTopButtonIsVisible(), "Back To Top button is not displayed when user is not at the top of the page");
     }
