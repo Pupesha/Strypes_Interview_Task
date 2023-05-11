@@ -27,35 +27,36 @@ public class HomePageSteps {
     }
 
     // Background
-    @Given("User is at home page")
+    @Given("user is at home page")
     public void userIsAtHomePage() {
         context.setBrowser("Firefox", false);
         context.goToPage("home");
         homePage = new HomePage(context.getBrowser());
     }
 
-    // Verify search field function with invalid search term
-    @Given("Search form is open")
+    // Verify search field function with missing search query
+    @Given("search form is open")
     public void searchFormIsOpen() {
         homePage.clickOpenSearchButton();
     }
 
-    @When("User enters invalid search term")
-    public void userEntersInvalidSearchTerm() {
-        String invalidTerm = UserHelper.newPassword(5, 10);
-        homePage.enterSearchTerm(invalidTerm);
+    @When("user enters missing phrase")
+    public void userEntersMissingPhrase() {
+        String term = "missing_phrase";
+        homePage.enterSearchTerm(term);
         PageHelper.pressEnter(context.getBrowser());
     }
 
-    @Then("No results should be found")
+    @Then("no results should be found")
     public void noResultsShouldBeFound() {
         SearchPage searchPage = new SearchPage(context.getBrowser());
-        assertTrue(searchPage.nothingFoundMessageIsDisplayed(), "Unexpected search results are shown");
+        assertTrue(searchPage.nothingFoundMessageIsDisplayed(), "Incorrect search results are found");
     }
 
-    // Verify if Main menu links are valid
-    @Then("Validate Main menu links")
-    public void validateMainMenuLinks() {
+    // Verify if Main menu links are leading to correct pages
+    @Then("verify Main menu links")
+    public void verifyMainMenuLinks() {
+        // Verify for broken links
         List<String> linkURLs = BrowserHelper.getLinksProperty(homePage.getMainMenuItems(), "url");
         List<String> brokenLinks = new ArrayList<>();
 
@@ -72,14 +73,11 @@ public class HomePageSteps {
                 System.out.println("Link with URL : " + link);
         }
         assertFalse(hasBrokenLinks, "Main menu contains items with broken links");
-    }
 
-    // Verify if Main menu links are leading to correct pages
-    @Then("Verify Main menu links")
-    public void verifyMainMenuLinks() {
+        // Verify if links are leading to correct pages
         List<String> targetURLs = BrowserHelper.getLinksProperty(homePage.getMainMenuItems(), "url");
         List<String> itemNames = BrowserHelper.getLinksProperty(homePage.getMainMenuItems(), "text");
-        List<String> badLinksNames = new ArrayList<>();
+        List<String> badItemsNames = new ArrayList<>();
 
         String url, name, actualURL, actualName;
         boolean hasBadLinks = false;
@@ -97,21 +95,21 @@ public class HomePageSteps {
             actualName = context.getBrowser().getTitle();
 
             if(!actualURL.equals(url) || !actualName.contains(name)) {
-                badLinksNames.add(itemNames.get(i));
+                badItemsNames.add(itemNames.get(i));
                 hasBadLinks = true;
             }
         }
 
         if(hasBadLinks) {
             System.out.println("The following items are not leading to correct page");
-            for (String item : badLinksNames)
+            for (String item : badItemsNames)
                 System.out.println("Menu item : " + item);
         }
         assertFalse(hasBadLinks, "There are menu items with incorrect links");
     }
 
     // Verify if Main menu top level links are changing their color on hover
-    @Then("Verify Main menu top links hover color")
+    @Then("verify Main menu top links hover color")
     public void verifyMainMenuTopLinksHoverColor() {
         List<WebElement> menuItems = homePage.getMainMenuTopItems();
         List<String> badItems = new ArrayList<>();
@@ -142,37 +140,37 @@ public class HomePageSteps {
     }
 
     // Verify if Back To Top button is hidden when user is at the top of the page
-    @Given("User is at top of the page")
+    @When("user is at top of the page")
     public void userIsAtTopOfThePage() {
         if(PageHelper.getYScroll(context.getBrowser()) > 0)
             PageHelper.scrollToTop(context.getBrowser());
     }
 
-    @Then("Back To Top button is hidden")
+    @Then("back To Top button is hidden")
     public void backToTopButtonIsHidden() {
         assertFalse(homePage.backToTopButtonIsVisible(), "Back To Top button is visible when user is at the top of the page");
     }
 
     // Verify if Back To Top button is displayed when user is not at the top of the page
-    @Given("User is not at top of the page")
+    @When("user is not at top of the page")
     public void userIsNotAtTopOfThePage() {
         int offset = BrowserHelper.getWindowHeight(context.getBrowser());
         PageHelper.scrollY(context.getBrowser(), offset);
     }
 
-    @Then("Back To Top button is displayed")
+    @Then("back To Top button is displayed")
     public void backToTopButtonIsDisplayed() {
         assertTrue(homePage.backToTopButtonIsVisible(), "Back To Top button is not displayed when user is not at the top of the page");
     }
 
     // User attempts newsletter subscription with valid not subscribed email
-    @Given("User enters valid not subscribed email")
+    @Given("user enters valid not subscribed email")
     public void userEntersValidNotSubscribedEmail() {
         String email = UserHelper.nameToEmail("test_user", true);
         homePage.enterNewsletterEmail(email);
     }
 
-    @And("User checks the Privacy policy checkbox")
+    @And("user checks the Privacy policy checkbox")
     public void userChecksThePrivacyPolicyCheckbox() {
         // Scroll to the bottom of page so newsletter privacy policy checkbox is visible
         PageHelper.scrollToBottom(context.getBrowser());
@@ -180,17 +178,17 @@ public class HomePageSteps {
         homePage.checkNewsletterPrivacyCheckbox();
     }
 
-    @When("User clicks Subscribe button")
+    @When("user clicks Subscribe button")
     public void userClicksSubscribeButton() {
         homePage.clickNewsletterButton();
     }
 
-    @Then("User is subscribed")
+    @Then("user is subscribed")
     public void userIsSubscribed() {
         assertTrue(homePage.subscrWelcomeMessageIsDisplayed(), "User is not subscribed");
     }
 
-    @And("Correct welcome message is displayed")
+    @And("correct welcome message is displayed")
     public void correctWelcomeMessageIsDisplayed() {
         String expectedMsg = "Thank you for signing up for our newsletter! You are in!";
         assertEquals(expectedMsg, homePage.subscrWelcomeMessageText(), "Welcome message is not correct");
